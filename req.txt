@@ -1,0 +1,38 @@
+Tabla activos
+
+id
+numero_activo
+descripcion
+departamento
+responsable
+fecha_ingreso
+tag
+obsoleto
+
+CREATE TABLE `activos` (
+	`id`	INTEGER PRIMARY KEY AUTOINCREMENT,
+	`numero`	TEXT UNIQUE,
+	`descripcion`	TEXT,
+	`departamento`	TEXT,
+	`responsable`	TEXT,
+	`fecha_ingreso`	TEXT,
+	`tag`	TEXT,
+	`obsoleto`	INTEGER
+);
+
+Tabla usuario_activo
+
+id
+usuario_id
+activo_id
+fecha
+
+CREATE TABLE `usuario_activo` (
+	`id`	INTEGER PRIMARY KEY AUTOINCREMENT,
+	`usuario_id`	INTEGER,
+	`activo_id`	INTEGER,
+	`fecha`	TEXT
+);
+
+
+
