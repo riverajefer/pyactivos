@@ -10,8 +10,7 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QFrame, QLabel, QComboBo
                              QPushButton, QMessageBox)
 
 from paginas.menu import Menu
-from database import Database
-from home import SecondWindow
+from DB.database import Database
 
 db_path = 'db.db'
 DB = Database()

@@ -36,3 +36,28 @@ CREATE TABLE `usuario_activo` (
 
 
 
+
+Login
+3 opciones
+
+Nuevo Activo
+Lectura de Activos
+Reporte
+
+User
+Administrador
+Tiene todos los permisos
+Nuevo Activo
+Lectura de Activos
+Reporte
+Eliminar
+Volver Obsoletos
+
+
+
+
+User normal
+Nuevo Activo
+Lectura de Activos
+Reporte
+

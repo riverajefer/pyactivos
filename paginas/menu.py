@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QHBoxLayout, QGr
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot
 
-from NuevoActivo import NuevoActivo 
+from paginas.NuevoActivo import NuevoActivo 
 
 class Menu(QDialog):
     def __init__(self):

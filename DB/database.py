@@ -207,11 +207,15 @@ class Database:
     #######################################################################
                 
     def write(self,table,columns,data):
+        try:
         
-        query = "INSERT INTO {0} ({1}) VALUES ({2});".format(table,columns,data)
-        print(str(query))
-
-        self.cursor.execute(query)
+            query = "INSERT INTO {0} ({1}) VALUES ({2});".format(table,columns,data)
+            print(str(query))
+            self.cursor.execute(query)
+        except Exception as err:
+            print('Query Failed: %s\nError: %s' % (query, str(err)))
+        finally:
+            self.close()        
 
 
     #######################################################################
