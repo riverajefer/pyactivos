@@ -5,11 +5,12 @@ import shutil
 from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, QHBoxLayout, 
 QGroupBox, QDialog, QVBoxLayout, QGridLayout, 
 QMainWindow, QLabel, QLineEdit, QTextEdit,
-QComboBox, QCalendarWidget, QFileDialog)
+QComboBox, QCalendarWidget, QFileDialog, QMessageBox)
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import pyqtSlot, QDate, Qt, pyqtSignal, QByteArray, QIODevice, QBuffer
 from pathlib import Path
 sys.path.append('..')
+from paginas.AsignarTagNFC import AsignarTagNFC
 from DB.database import Database
 
 db_path = 'db.db'
@@ -157,15 +158,7 @@ class NuevoActivo(QDialog):
         if foto:
             mypath = Path().absolute()
             mypath = str(mypath) + str('/imgs/activos')
-
             shutil.copy(self.rutaImagen, str(mypath))
-  
-
-        print('numero: ', numeroActivo)
-        print('fecha: ', self.fechaIngreso)
-        print('foto: ', foto)
-        print('Ruta imagen: ', self.rutaImagen)
-        print('nombre imagen: ', self.nombreImagen)
 
         columns = 'numero, descripcion, departamento, responsable, fecha_ingreso, tag, obsoleto, imagen'
         data = " '"+numeroActivo+"', '"+descripcion+"', '"+departamento+"', '"+responsble+"', '"+str(self.fechaIngreso)+"', '" "', "+str(0)+", '"+self.nombreImagen+"' "
@@ -174,6 +167,14 @@ class NuevoActivo(QDialog):
         DB.write('activos', columns, data)
         print('OK escrito !')
 
+        btnRespuesta = QMessageBox.question(self, 'Información guardada correctamente', "Quiere asignar el registro a una etiqueta NFC?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if btnRespuesta == QMessageBox.Yes:
+            print('Yes.')
+            self.close()
+            self.SW = AsignarTagNFC()
+            return
+        else:
+            print('No.')  
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

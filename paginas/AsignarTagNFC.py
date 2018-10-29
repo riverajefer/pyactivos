@@ -1,0 +1,38 @@
+import sys
+from PyQt5 import QtCore, QtWidgets
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QGridLayout, QWidget
+from PyQt5.QtCore import QSize    
+
+class AsignarTagNFC(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.title = 'MENÚ'
+        self.left = 500
+        self.top = 350
+        self.width = 800
+        self.height = 400
+        self.initUI()
+ 
+    def initUI(self):
+        self.setWindowTitle(self.title)
+        self.setGeometry(self.left, self.top, self.width, self.height)
+ 
+        self.setWindowTitle("Hello world") 
+
+        centralWidget = QWidget(self)          
+        self.setCentralWidget(centralWidget)   
+
+        gridLayout = QGridLayout(self)     
+        centralWidget.setLayout(gridLayout)  
+
+        title = QLabel("Hello World from PyQt", self) 
+        title.setAlignment(QtCore.Qt.AlignCenter) 
+        gridLayout.addWidget(title, 0, 0)
+        self.show()
+
+    
+ 
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    ex = AsignarTagNFC()
+    sys.exit(app.exec_())
