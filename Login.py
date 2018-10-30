@@ -165,7 +165,6 @@ class ventanaLogin(QMainWindow):
     print("password:", password)
     valida_login = DB.login(usuario, password)
     
-    print('login:  ', valida_login)
     if (valida_login):
       self.close()
       self.SW = Menu()

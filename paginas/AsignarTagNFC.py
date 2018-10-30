@@ -6,7 +6,7 @@ from PyQt5.QtCore import QSize
 class AsignarTagNFC(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.title = 'MENÚ'
+        self.title = 'ASIGNAR TAG NFC'
         self.left = 500
         self.top = 350
         self.width = 800
@@ -17,7 +17,7 @@ class AsignarTagNFC(QMainWindow):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
  
-        self.setWindowTitle("Hello world") 
+        self.setWindowTitle("ACERQUE SU TAG NFC AL LECTOR") 
 
         centralWidget = QWidget(self)          
         self.setCentralWidget(centralWidget)   
@@ -25,7 +25,7 @@ class AsignarTagNFC(QMainWindow):
         gridLayout = QGridLayout(self)     
         centralWidget.setLayout(gridLayout)  
 
-        title = QLabel("Hello World from PyQt", self) 
+        title = QLabel("ACERQUE SU TAG NFC AL LECTOR", self) 
         title.setAlignment(QtCore.Qt.AlignCenter) 
         gridLayout.addWidget(title, 0, 0)
         self.show()
