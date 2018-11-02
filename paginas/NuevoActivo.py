@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import sys
 from os import getcwd, path
 import os
@@ -27,8 +29,8 @@ class QLabelClickable(QLabel):
         self.clicked.emit()    
 
 class NuevoActivo(QDialog):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent=None):
+        super(NuevoActivo, self).__init__(parent)
         self.title = 'MENÚ'
         self.left = 500
         self.top = 350
@@ -164,14 +166,15 @@ class NuevoActivo(QDialog):
         data = " '"+numeroActivo+"', '"+descripcion+"', '"+departamento+"', '"+responsble+"', '"+str(self.fechaIngreso)+"', '" "', "+str(0)+", '"+self.nombreImagen+"' "
         print(data)
 
-        DB.write('activos', columns, data)
+        rowId = DB.write('activos', columns, data)
+        print('lastRow: ', rowId)
         print('OK escrito !')
 
         btnRespuesta = QMessageBox.question(self, 'Información guardada correctamente', "Quiere asignar el registro a una etiqueta NFC?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if btnRespuesta == QMessageBox.Yes:
             print('Yes.')
             self.close()
-            self.SW = AsignarTagNFC()
+            self.SW = AsignarTagNFC(None, rowId)
             return
         else:
             print('No.')  

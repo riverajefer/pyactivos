@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ###########################################################################
 #
 ## @file database.py
@@ -208,12 +210,12 @@ class Database:
                 
     def write(self,table,columns,data):
         try:
-        
             query = "INSERT INTO {0} ({1}) VALUES ({2});".format(table,columns,data)
             print(str(query))
             self.cursor.execute(query)
+            return self.cursor.lastrowid
         except Exception as err:
-            print('Query Failed: %s\nError: %s' % (query, str(err)))
+            print('Query Failed: Error: %s' % (str(err)))
         finally:
             self.close()        
 
@@ -294,4 +296,9 @@ class Database:
             return True
         else:
             return False
+
+    def addTagToId(self, tag, id):
+        query = "UPDATE activos SET tag = '{0}' WHERE id = '{1}' ;".format(tag, id)
+        self.cursor.execute(query)
+        print(str(query))
 

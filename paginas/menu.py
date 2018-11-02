@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QHBoxLayout, QGroupBox, QDialog, QVBoxLayout, QGridLayout, QMainWindow
 from PyQt5.QtGui import QIcon
@@ -6,8 +8,8 @@ from PyQt5.QtCore import pyqtSlot
 from paginas.NuevoActivo import NuevoActivo 
 
 class Menu(QDialog):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent=None):
+        super(Menu, self).__init__(parent)
         self.title = 'MENÚ'
         self.left = 500
         self.top = 350
