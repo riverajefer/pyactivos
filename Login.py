@@ -168,7 +168,7 @@ class ventanaLogin(QMainWindow):
     
     if (valida_login):
       self.close()
-      self.SW = Menu()
+      self.SW = Menu(None, DB)
       self.SW.show()
       self.limpiar_campos()
     else:

@@ -71,6 +71,7 @@ class Database:
         try:
             self.conn = sqlite3.connect(name);
             self.cursor = self.conn.cursor()
+            print ("Opened database successfully")
 
         except sqlite3.Error as e:
             print("Error connecting to database!")
@@ -217,7 +218,7 @@ class Database:
         except Exception as err:
             print('Query Failed: Error: %s' % (str(err)))
         finally:
-            self.close()        
+            self.conn.commit()        
 
 
     #######################################################################
@@ -298,7 +299,34 @@ class Database:
             return False
 
     def addTagToId(self, tag, id):
-        query = "UPDATE activos SET tag = '{0}' WHERE id = '{1}' ;".format(tag, id)
+        try:
+            query = "UPDATE activos SET tag = '{0}' WHERE id = '{1}' ;".format(tag, id)
+            self.cursor.execute(query)
+            print(str(query))
+            return True
+        except Exception as err:
+            print('Query update Failed: Error: %s' % (str(err)))
+            return False
+
+    def existeNFC(self,tag):
+        query = "SELECT id from activos WHERE tag = '{0}' ;".format(tag)
         self.cursor.execute(query)
         print(str(query))
+        rows = self.cursor.fetchall()
+        if(len(rows)>0):
+            return True
+        else:
+            return False
+
+
+    def buscarPorNumero(self,numero):
+        query = "SELECT id from activos WHERE numero = '{0}' ;".format(numero)
+        self.cursor.execute(query)
+        print(str(query))
+        rows = self.cursor.fetchall()
+        if(len(rows)>0):
+            return True
+        else:
+            return False
+        
 

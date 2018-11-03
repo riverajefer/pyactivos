@@ -29,10 +29,10 @@ class QLabelClickable(QLabel):
     def mousePressEvent(self, event):
         self.clicked.emit()    
 
-class NuevoActivo(QDialog):
+class DetallesActivo(QDialog):
     def __init__(self, parent=None, DB=None):
-        super(NuevoActivo, self).__init__(parent)
-        self.title = 'MENÚ'
+        super(DetallesActivo, self).__init__(parent)
+        self.title = 'DETALLES ACTIVO'
         self.left = 500
         self.top = 350
         self.width = 800
@@ -193,6 +193,6 @@ class NuevoActivo(QDialog):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ex = NuevoActivo()
+    ex = DetallesActivo()
     sys.exit(app.exec_())
 
