@@ -14,11 +14,6 @@ from pathlib import Path
 sys.path.append('..')
 from paginas.AsignarTagNFC import AsignarTagNFC
 
-from DB.database import Database
-
-db_path = 'db.db'
-DB = Database()
-DB.open(db_path)
 
 class QLabelClickable(QLabel):
     clicked = pyqtSignal()
@@ -30,18 +25,24 @@ class QLabelClickable(QLabel):
         self.clicked.emit()    
 
 class DetallesActivo(QDialog):
-    def __init__(self, parent=None, DB=None):
+    def __init__(self, parent=None, DB=None, ID=None):
         super(DetallesActivo, self).__init__(parent)
         self.title = 'DETALLES ACTIVO'
         self.left = 500
         self.top = 350
         self.width = 800
         self.height = 400        
-        self.initUI()
         self.DB = DB
+        self.id = ID
+        self.detalles='';
         self.fechaIngreso = '';
+        self.initUI()
         
     def initUI(self):
+        self.detalles = self.DB.getPorId(self.id);
+
+        print("DETALLES: ", self.detalles)
+        print('Detalles numero: ', self.detalles[0][1])
         
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
@@ -51,55 +52,59 @@ class DetallesActivo(QDialog):
         lblNumeroActivo = QLabel('Número de Activo')
         lblResponsable = QLabel('Responsable')
         lblDepartamento = QLabel('Departamento')
+        lblDepartamento.setStyleSheet("QLabel {font-weight: bold;}")
+
         lblFechaIngreso = QLabel('Fecha de Ingreso')
         lblDescripcion = QLabel('Descripcion')
 
-        self.comboDepartamento = QComboBox(self)
-        self.comboDepartamento.addItems(["Contabilidad", "Tecnología"])
-        self.comboDepartamento.setCurrentIndex(0)
-        self.comboDepartamento.setFixedWidth(self.widthtInput)
-        self.comboDepartamento.setFixedHeight(self.heightInput)
+        self.departamento = QLabel(self.detalles[0][3])
+        self.departamento.setFixedWidth(self.widthtInput)
+        self.departamento.setFixedHeight(self.heightInput)
 
         self.editNumeroActivo = QLineEdit()
         self.editNumeroActivo.setFixedWidth(self.widthtInput)
         self.editNumeroActivo.setFixedHeight(self.heightInput)
 
+        self.editNumeroActivo.setDisabled(True);
+        self.editNumeroActivo.setText(self.detalles[0][1])
+
         self.editResponsable = QLineEdit()
         self.editResponsable.setFixedWidth(self.widthtInput)
         self.editResponsable.setFixedHeight(self.heightInput)
 
+        self.editResponsable.setDisabled(True);
+        self.editResponsable.setText(self.detalles[0][4])
+
         self.editDescripcion = QTextEdit()
         self.editDescripcion.setFixedWidth(self.widthtInput)
+        self.editDescripcion.setDisabled(True);
+        self.editDescripcion.setText(self.detalles[0][2])
 
-        self.fecha = QDateEdit(self)
-        self.fecha.setDateTime(QDateTime.currentDateTime())
-        self.fecha.setCalendarPopup(True)
+        self.fecha = QLabel(self.detalles[0][5])
 
-        self.labelImagen = QLabelClickable(self)
+        self.labelImagen = QLabel(self)
         self.labelImagen.setFixedWidth(180)
         self.labelImagen.setFixedHeight(180)
-        self.labelImagen.setToolTip("Imagen")
-        self.labelImagen.setCursor(Qt.PointingHandCursor)
 
         self.labelImagen.setStyleSheet("QLabel {background-color: white; border: 1px solid "
                                        "#01DFD7; border-radius: 2px;}")
         
         self.labelImagen.setAlignment(Qt.AlignCenter)
+        ruta = 'imgs/activos/'+self.detalles[0][8]
+        print('ruta: ', ruta)
 
-        self.btnSeleccionar = QPushButton("Seleccionar Imagen", self)
-        self.btnSeleccionar.setToolTip("Seleccionar imagen")
-        self.btnSeleccionar.setFixedWidth(180)
-        self.btnSeleccionar.setFixedHeight(25)        
-        self.btnSeleccionar.setCursor(Qt.PointingHandCursor)
+        pixmapImagen = QPixmap(ruta).scaled(180, 180, Qt.KeepAspectRatio,
+                                                  Qt.SmoothTransformation)
 
-        # Llamar función al hacer clic sobre el label
-        self.labelImagen.clicked.connect(self.seleccionarImagen)
-        self.btnSeleccionar.clicked.connect(self.seleccionarImagen)
-     
+        # Mostrar imagen
+        self.labelImagen.setPixmap(pixmapImagen)
+
+
         self.btnGuardar = QPushButton("GUARDAR", self)
         self.btnGuardar.setFixedWidth(180)
         self.btnGuardar.setFixedHeight(35)        
         self.btnGuardar.clicked.connect(self.guardar)
+        self.btnGuardar.setDisabled(True)
 
         self.btnVolver = QPushButton("VOLVER", self)
         self.btnVolver.setFixedWidth(180)
@@ -116,7 +121,7 @@ class DetallesActivo(QDialog):
         grid.addWidget(self.editResponsable, 3, 0)
 
         grid.addWidget(lblDepartamento, 4, 0)
-        grid.addWidget(self.comboDepartamento, 5, 0)
+        grid.addWidget(self.departamento, 5, 0)
 
         grid.addWidget(lblFechaIngreso, 6, 0)
         grid.addWidget(self.fecha, 7, 0)
@@ -124,10 +129,10 @@ class DetallesActivo(QDialog):
         grid.addWidget(lblDescripcion, 8, 0)
         grid.addWidget(self.editDescripcion, 9, 0, 1, 0)
 
-        grid.addWidget(self.btnSeleccionar, 0, 1)
         grid.addWidget(self.labelImagen, 1, 1, 5, 5)
         grid.addWidget(self.btnGuardar, 3, 5)
         grid.addWidget(self.btnVolver, 4, 5)
+
 
         self.setLayout(grid) 
         self.show()
@@ -136,21 +141,6 @@ class DetallesActivo(QDialog):
         print(date.toString())        
         self.fechaIngreso = date.toString();
  
-    def seleccionarImagen(self):
-        self.rutaImagen, extension = QFileDialog.getOpenFileName(self, "Seleccionar imagen", getcwd(),
-                                                        "Archivos de imagen (*.png *.jpg)",
-                                                        options=QFileDialog.Options())
-        
-        print(self.rutaImagen)
-        self.nombreImagen = path.basename(self.rutaImagen)
-
-        if self.rutaImagen:
-            # Adaptar imagen
-            pixmapImagen = QPixmap(self.rutaImagen).scaled(180, 180, Qt.KeepAspectRatio,
-                                                  Qt.SmoothTransformation)
-
-            # Mostrar imagen
-            self.labelImagen.setPixmap(pixmapImagen)
     
     def guardar(self):
         print('Guardar...')
@@ -172,7 +162,7 @@ class DetallesActivo(QDialog):
         data = " '"+numeroActivo+"', '"+descripcion+"', '"+departamento+"', '"+responsble+"', '"+str(fechaIngreso)+"', '" "', "+str(0)+", '"+self.nombreImagen+"' "
         print(data)
 
-        rowId = DB.write('activos', columns, data)
+        rowId = self.DB.write('activos', columns, data)
         print('lastRow: ', rowId)
         print('OK escrito !')
 
@@ -181,7 +171,7 @@ class DetallesActivo(QDialog):
             print('Yes.')
             self.close()
             from menu import Menu
-            self.SW = AsignarTagNFC(None, rowId, DB)
+            #self.SW = AsignarTagNFC(None, rowId, DB)
             return
         else:
             print('No.')  
@@ -189,7 +179,7 @@ class DetallesActivo(QDialog):
     def volver(self, tag):
       from menu import Menu
       self.SW = Menu(None, self.DB)
-      #self.close()
+      self.close()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

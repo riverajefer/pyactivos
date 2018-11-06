@@ -173,7 +173,6 @@ class NuevoActivo(QDialog):
         print(data)
 
         rowId = DB.write('activos', columns, data)
-        print('lastRow: ', rowId)
         print('OK escrito !')
 
         btnRespuesta = QMessageBox.question(self, 'Información guardada correctamente', "Quiere asignar el registro a una etiqueta NFC?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
@@ -189,7 +188,7 @@ class NuevoActivo(QDialog):
     def volver(self, tag):
       from menu import Menu
       self.SW = Menu(None, self.DB)
-      #self.close()
+      self.close()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

@@ -293,8 +293,9 @@ class Database:
         print(str(query))
         # fetch data
         rows = self.cursor.fetchall()
+        
         if(len(rows)>0):
-            return True
+            return rows[0][0]
         else:
             return False
 
@@ -307,6 +308,8 @@ class Database:
         except Exception as err:
             print('Query update Failed: Error: %s' % (str(err)))
             return False
+        finally:
+            self.conn.commit()            
 
     def existeNFC(self,tag):
         query = "SELECT id from activos WHERE tag = '{0}' ;".format(tag)
@@ -318,15 +321,35 @@ class Database:
         else:
             return False
 
-
     def buscarPorNumero(self,numero):
         query = "SELECT id from activos WHERE numero = '{0}' ;".format(numero)
         self.cursor.execute(query)
         print(str(query))
         rows = self.cursor.fetchall()
         if(len(rows)>0):
-            return True
+            return rows[0][0] 
         else:
             return False
+
+    def getPorId(self,id):
+        query = "SELECT * from activos WHERE id = '{0}' ;".format(id)
+        self.cursor.execute(query)
+        print(str(query))
+        rows = self.cursor.fetchall()
+        return rows
+
+    def actualizarSession(self, user_id):
+        try:
+            query = "UPDATE sesion SET user_id = '{0}' ;".format(user_id)
+            self.cursor.execute(query)
+            print(str(query))
+            return True
+        except Exception as err:
+            print('Query update Failed: Error: %s' % (str(err)))
+            return False
+        finally:
+            self.conn.commit()        
+
+
         
 

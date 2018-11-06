@@ -8,8 +8,7 @@ from threading import Thread
 import signal
 import subprocess
 import time
-#from paginas.NuevoActivo import NuevoActivo 
-#from paginas.AsignarTagNFC import AsignarTagNFC
+import datetime
 sys.path.append('..')
 
 try:
@@ -78,6 +77,7 @@ class BuscarActivo(QDialog):
         self.inputBuscar = QLineEdit()
         self.inputBuscar.setFixedWidth(200)
         self.inputBuscar.setFixedHeight(35)
+        self.inputBuscar.setText('123')
         
         self.btnBuscar = QPushButton("BUSCAR ACTIVO", self)
         self.btnBuscar.setFixedWidth(150)
@@ -101,17 +101,19 @@ class BuscarActivo(QDialog):
  
         self.horizontalGroupBox.setLayout(layout)
 
-        self.nfc_thread = NFCThread()  # This is the thread object
-        self.nfc_thread.start()
-        self.nfc_thread.signal.connect(self.finished)
+        #self.nfc_thread = NFCThread()  # This is the thread object
+        #self.nfc_thread.start()
+        #self.nfc_thread.signal.connect(self.finished)
 
 
     def buscarActivo(self):
       numero = self.inputBuscar.text()
-      print('numero buscar: ', numero)
-      if self.DB.buscarPorNumero(str(numero)):
+
+      id = self.DB.buscarPorNumero(str(numero))
+      if id:
         print('Ok encontrado')
-        self.goToDetalles(1)
+        self.goToDetalles(id)
+        self.guardarRegistro(id)
       else:
         print('No encontrado')
 
@@ -124,12 +126,18 @@ class BuscarActivo(QDialog):
       self.SW = Menu(None, self.DB)
       self.close()
 
+    def guardarRegistro(self, activo_id):
+        columns = 'usuario_id, activo_id, fecha'
+        usuario = 1
+        fecha = datetime.datetime.now()
+        data = " '"+str(usuario)+"', '"+str(activo_id)+"', '"+str(fecha)+"'"
+        print(data)
+        self.DB.write('usuario_activo', columns, data)     
+
     def goToDetalles(self, id):
       from paginas.DetallesActivo import DetallesActivo
-      self.SW = DetallesActivo(None, self.DB)
+      self.SW = DetallesActivo(None, self.DB, id)
       self.close()
-
-
  
  
 if __name__ == '__main__':

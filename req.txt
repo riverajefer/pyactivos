@@ -34,6 +34,10 @@ CREATE TABLE `usuario_activo` (
 	`fecha`	TEXT
 );
 
+CREATE TABLE `session` (
+	`id`	INTEGER PRIMARY KEY AUTOINCREMENT,
+	`user_id`	INTEGER
+);
 
 
 
@@ -60,4 +64,20 @@ User normal
 Nuevo Activo
 Lectura de Activos
 Reporte
+
+
+Login
+Menú
+Nuevo activo. (, validar los datos, (Todos obligatorios))
+Asignar NFC (unico por activo)
+Buscar (Casi, que busque tambien por NFC, agregar quien busco y que)
+
+Detalles (Casi, Organizar mejor la info, mostrar la imagen correcta )
+Si es administrador el usuario, habilitar opción de Obsoleto.
+guardar
+
+Reportes (Tabla, descargar, la sessión de usuario lo que se leyo )
+
+
+
 

@@ -84,9 +84,9 @@ class AsignarTagNFC(QMainWindow):
         gridLayout.addWidget(self.button, 1, 0)
         self.show()
 
-        self.nfc_thread = NFCThread()  # This is the thread object
-        self.nfc_thread.start()
-        self.nfc_thread.signal.connect(self.finished)
+        #self.nfc_thread = NFCThread()  # This is the thread object
+        #self.nfc_thread.start()
+        #self.nfc_thread.signal.connect(self.finished)
 
 
     def finished(self, tag):

@@ -107,6 +107,7 @@ class ventanaLogin(QMainWindow):
     self.lineEditUsuario.setFixedWidth(238)
     self.lineEditUsuario.setFixedHeight(26)
     self.lineEditUsuario.move(40, 1)
+    self.lineEditUsuario.setText('user')
 
     # ========================================================
 
@@ -131,6 +132,7 @@ class ventanaLogin(QMainWindow):
     self.lineEditContrasenia.setFixedWidth(238)
     self.lineEditContrasenia.setFixedHeight(26)
     self.lineEditContrasenia.move(40, 1)
+    self.lineEditContrasenia.setText('1234')
 
     #================== WIDGETS QPUSHBUTTON ===================
 
@@ -161,15 +163,15 @@ class ventanaLogin(QMainWindow):
     usuario = self.lineEditUsuario.text()
     password = self.lineEditContrasenia.text()
 
-    print("Cuenta:", cuenta)
-    print("Usuario:", usuario)
-    print("password:", password)
-    valida_login = DB.login(usuario, password)
+    user_id = DB.login(usuario, password)
     
-    if (valida_login):
-      self.close()
+    if (user_id):
       self.SW = Menu(None, DB)
       self.SW.show()
+      
+      self.actualizarSesion(user_id)
+
+      self.close()
       self.limpiar_campos()
     else:
       self.mesgError()
@@ -184,6 +186,9 @@ class ventanaLogin(QMainWindow):
   def limpiar_campos(self):
     self.lineEditUsuario.clear()
     self.lineEditContrasenia.clear()          
+
+  def actualizarSesion(self, user_id):
+    DB.actualizarSession(user_id)
   
     
 # ================================================================
