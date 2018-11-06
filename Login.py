@@ -207,5 +207,6 @@ if __name__ == '__main__':
   
   ventana = ventanaLogin()
   ventana.show()
+  # ventana.showFullScreen()
   
   sys.exit(aplicacion.exec_())

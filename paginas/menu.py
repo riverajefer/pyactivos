@@ -5,8 +5,6 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QHBoxLayout, QGr
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot
 
-
-
 class Menu(QDialog):
     def __init__(self, parent=None, DB=None):
         super(Menu, self).__init__(parent)
