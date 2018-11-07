@@ -51,6 +51,7 @@ class Menu(QDialog):
         btnReporte = QPushButton("REPORTE", self)
         btnReporte.setFixedWidth(135)
         btnReporte.setFixedHeight(80)
+        btnReporte.clicked.connect(self.gotToReportes)
         
         layout.addWidget(btnNuevo,0,0) 
         layout.addWidget(btnLectura,0,1) 
@@ -67,6 +68,11 @@ class Menu(QDialog):
         self.close()
         from paginas.BuscarActivo import BuscarActivo 
         self.SW = BuscarActivo(None, self.DB)
+
+    def gotToReportes(self):
+        self.close()
+        from paginas.Reportes import Reportes 
+        self.SW = Reportes(None, self.DB)
 
  
 if __name__ == '__main__':

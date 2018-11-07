@@ -348,7 +348,19 @@ class Database:
             print('Query update Failed: Error: %s' % (str(err)))
             return False
         finally:
-            self.conn.commit()        
+            self.conn.commit()
+    
+    def reportes(self, user_id):
+        limit = 100
+
+        query = "SELECT U.nombre, A.numero, UA.fecha FROM Usuarios AS U JOIN usuario_activo UA ON U.id = UA.usuario_id JOIN activos A ON UA.activo_id = A.id WHERE U.id = '{0}' ;".format(user_id)
+        self.cursor.execute(query)
+
+        # fetch data
+        rows = self.cursor.fetchall()
+
+        return rows[len(rows)-limit if limit else 0:]
+            
 
 
         
