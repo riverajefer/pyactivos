@@ -7,7 +7,7 @@ import shutil
 from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, QHBoxLayout, 
 QGroupBox, QDialog, QVBoxLayout, QGridLayout, 
 QMainWindow, QLabel, QLineEdit, QTextEdit,
-QComboBox, QCalendarWidget, QFileDialog, QMessageBox, QDateEdit)
+QComboBox, QCalendarWidget, QFileDialog, QMessageBox, QDateEdit, QCheckBox)
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import pyqtSlot, QDate, Qt, pyqtSignal, QByteArray, QIODevice, QBuffer, QDateTime
 from pathlib import Path
@@ -50,37 +50,51 @@ class DetallesActivo(QDialog):
         self.heightInput = 25
 
         lblNumeroActivo = QLabel('Número de Activo')
+        lblNumeroActivo.setStyleSheet("QLabel {font-weight: bold;}")
+
         lblResponsable = QLabel('Responsable')
+        lblResponsable.setStyleSheet("QLabel {font-weight: bold;}")
+
         lblDepartamento = QLabel('Departamento')
         lblDepartamento.setStyleSheet("QLabel {font-weight: bold;}")
 
         lblFechaIngreso = QLabel('Fecha de Ingreso')
-        lblDescripcion = QLabel('Descripcion')
+        lblFechaIngreso.setStyleSheet("QLabel {font-weight: bold;}")
 
-        self.departamento = QLabel(self.detalles[0][3])
+        lblDescripcion = QLabel('Descripcion')
+        lblDescripcion.setStyleSheet("QLabel {font-weight: bold;}")
+
+        self.checkObsoleto = QCheckBox("ACTIVO OBSOLETO")
+        self.checkObsoleto.stateChanged.connect(lambda:self.cambioCheck(self.checkObsoleto))
+
+        self.departamento = QLineEdit()
         self.departamento.setFixedWidth(self.widthtInput)
-        self.departamento.setFixedHeight(self.heightInput)
+        self.departamento.setText(self.detalles[0][3])
+        self.departamento.setDisabled(True)        
 
         self.editNumeroActivo = QLineEdit()
         self.editNumeroActivo.setFixedWidth(self.widthtInput)
         self.editNumeroActivo.setFixedHeight(self.heightInput)
 
-        self.editNumeroActivo.setDisabled(True);
+        self.editNumeroActivo.setDisabled(True)
         self.editNumeroActivo.setText(self.detalles[0][1])
 
         self.editResponsable = QLineEdit()
         self.editResponsable.setFixedWidth(self.widthtInput)
         self.editResponsable.setFixedHeight(self.heightInput)
 
-        self.editResponsable.setDisabled(True);
+        self.editResponsable.setDisabled(True)
         self.editResponsable.setText(self.detalles[0][4])
 
         self.editDescripcion = QTextEdit()
         self.editDescripcion.setFixedWidth(self.widthtInput)
-        self.editDescripcion.setDisabled(True);
+        self.editDescripcion.setDisabled(True)
         self.editDescripcion.setText(self.detalles[0][2])
 
-        self.fecha = QLabel(self.detalles[0][5])
+        self.fecha = QLineEdit()
+        self.fecha.setFixedWidth(self.widthtInput)
+        self.fecha.setText(self.detalles[0][5])
+        self.fecha.setDisabled(True)
 
         self.labelImagen = QLabel(self)
         self.labelImagen.setFixedWidth(180)
@@ -98,8 +112,6 @@ class DetallesActivo(QDialog):
 
         # Mostrar imagen
         self.labelImagen.setPixmap(pixmapImagen)
-
-
         self.btnGuardar = QPushButton("GUARDAR", self)
         self.btnGuardar.setFixedWidth(180)
         self.btnGuardar.setFixedHeight(35)        
@@ -129,52 +141,33 @@ class DetallesActivo(QDialog):
         grid.addWidget(lblDescripcion, 8, 0)
         grid.addWidget(self.editDescripcion, 9, 0, 1, 0)
 
-        grid.addWidget(self.labelImagen, 1, 1, 5, 5)
-        grid.addWidget(self.btnGuardar, 3, 5)
+        grid.addWidget(self.labelImagen, 1, 1, 6, 5)
         grid.addWidget(self.btnVolver, 4, 5)
 
+        if self.DB.userIsAdmin():
+            grid.addWidget(self.checkObsoleto, 7, 1)
+            grid.addWidget(self.btnGuardar, 3, 5)
+        else:
+            self.checkObsoleto.hide()
+            self.btnGuardar.hide()
 
         self.setLayout(grid) 
         self.show()
+
+    def cambioCheck(self,b):
+        self.btnGuardar.setDisabled(not b.isChecked())
 
     def showDate(self, date):
         print(date.toString())        
         self.fechaIngreso = date.toString();
  
-    
     def guardar(self):
         print('Guardar...')
-        temp_var  = self.fecha.date()
-        fechaIngreso = temp_var.toPyDate()
-        responsble = self.editResponsable.text()
-        descripcion = self.editDescripcion.toPlainText()
-        departamento = self.comboDepartamento.currentText()
+        self.DB.toggleObsoleto(1, self.id)
+        msg = QMessageBox()
+        msg.information(self, "Ok !", "Guardado Correctamente")        
+        print('Ok')
 
-        numeroActivo = " ".join(self.editNumeroActivo.text().split()).title()
-        foto = self.labelImagen.pixmap() 
-        
-        if foto:
-            mypath = Path().absolute()
-            mypath = str(mypath) + str('/imgs/activos')
-            shutil.copy(self.rutaImagen, str(mypath))
-
-        columns = 'numero, descripcion, departamento, responsable, fecha_ingreso, tag, obsoleto, imagen'
-        data = " '"+numeroActivo+"', '"+descripcion+"', '"+departamento+"', '"+responsble+"', '"+str(fechaIngreso)+"', '" "', "+str(0)+", '"+self.nombreImagen+"' "
-        print(data)
-
-        rowId = self.DB.write('activos', columns, data)
-        print('lastRow: ', rowId)
-        print('OK escrito !')
-
-        btnRespuesta = QMessageBox.question(self, 'Información guardada correctamente', "Quiere asignar el registro a una etiqueta NFC?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-        if btnRespuesta == QMessageBox.Yes:
-            print('Yes.')
-            self.close()
-            from menu import Menu
-            #self.SW = AsignarTagNFC(None, rowId, DB)
-            return
-        else:
-            print('No.')  
 
     def volver(self, tag):
       from menu import Menu

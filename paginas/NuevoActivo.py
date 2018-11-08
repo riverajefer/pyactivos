@@ -141,27 +141,33 @@ class NuevoActivo(QDialog):
                                                         "Archivos de imagen (*.png *.jpg)",
                                                         options=QFileDialog.Options())
         
-        print(self.rutaImagen)
         self.nombreImagen = path.basename(self.rutaImagen)
 
         if self.rutaImagen:
-            # Adaptar imagen
             pixmapImagen = QPixmap(self.rutaImagen).scaled(180, 180, Qt.KeepAspectRatio,
                                                   Qt.SmoothTransformation)
 
-            # Mostrar imagen
             self.labelImagen.setPixmap(pixmapImagen)
     
     def guardar(self):
-        print('Guardar...')
         temp_var  = self.fecha.date()
         fechaIngreso = temp_var.toPyDate()
         responsble = self.editResponsable.text()
         descripcion = self.editDescripcion.toPlainText()
         departamento = self.comboDepartamento.currentText()
+        numeroActivo = self.editNumeroActivo.text().replace(" ", "")
+        foto = self.labelImagen.pixmap()
 
-        numeroActivo = " ".join(self.editNumeroActivo.text().split()).title()
-        foto = self.labelImagen.pixmap() 
+        msg = QMessageBox()
+        QMessageBox().setIcon(QMessageBox.Warning)
+        
+        if(not  self.validaCampos()):
+            msg.warning(self, "Error !", "Verifique, hay campos vacios !")
+            return
+        if self.validaNumeroActivo():
+            msg.warning(self, "Error !", "El número de activo, ya se ha registrado !")
+            self.editNumeroActivo.setFocus()
+            return
         
         if foto:
             mypath = Path().absolute()
@@ -173,19 +179,37 @@ class NuevoActivo(QDialog):
         print(data)
 
         rowId = DB.write('activos', columns, data)
-        print('OK escrito !')
 
         btnRespuesta = QMessageBox.question(self, 'Información guardada correctamente', "Quiere asignar el registro a una etiqueta NFC?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if btnRespuesta == QMessageBox.Yes:
-            print('Yes.')
-            self.close()
-            from menu import Menu
             self.SW = AsignarTagNFC(None, rowId, DB)
-            return
+            self.close()
         else:
-            print('No.')  
+            self.volver()
 
-    def volver(self, tag):
+    
+    def validaCampos(self):
+        numero = self.editNumeroActivo.text().replace(" ", "")
+        responsble = self.editResponsable.text()
+        descripcion = self.editDescripcion.toPlainText()
+        foto = self.labelImagen.pixmap()
+        validado = True
+        if (not numero):
+            validado = False
+        if (not responsble):
+            validado = False
+        if (not descripcion):
+            validado = False
+        if (not foto):
+            validado = False
+        
+        return validado
+    
+    def validaNumeroActivo(self):
+        numero = self.editNumeroActivo.text().replace(" ", "")
+        return self.DB.existeNumeroActivo(numero)
+    
+    def volver(self):
       from menu import Menu
       self.SW = Menu(None, self.DB)
       self.close()

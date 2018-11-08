@@ -41,7 +41,7 @@ class Menu(QDialog):
         btnNuevo.clicked.connect(self.gotToNuevoActivo)
 
         btnLectura = QPushButton("LECTURA DE ACTIVO", self)
-        btnLectura.setFixedWidth(135)
+        btnLectura.setFixedWidth(145)
         btnLectura.setFixedHeight(80)
 
         btnLectura.clicked.connect(self.gotToBuscarActivo)

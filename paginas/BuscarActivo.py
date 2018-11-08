@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QHBoxLayout, QGroupBox, QDialog, QVBoxLayout, QGridLayout, QMainWindow, QLabel, QLineEdit
+from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, QHBoxLayout, 
+QGroupBox, QDialog, QVBoxLayout, 
+QGridLayout, QMainWindow, QLabel, QLineEdit, QMessageBox)
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QSize, QThread, pyqtSignal
 from threading import Thread
@@ -71,7 +73,7 @@ class BuscarActivo(QDialog):
         layout = QGridLayout()
       
         self.lblBuscar = QLabel('Número de activo')
-        self.lblBuscar.setFixedWidth(85)
+        self.lblBuscar.setFixedWidth(100)
         self.lblBuscar.setFixedHeight(35)        
 
         self.inputBuscar = QLineEdit()
@@ -91,6 +93,7 @@ class BuscarActivo(QDialog):
         self.btnVolver.clicked.connect(self.volver)
         
         self.lblEtiqueta = QLabel('O ACERQUE LA ETIQUETA NFC')
+        self.lblEtiqueta.setStyleSheet("QLabel {font-weight: bold;}")
 
         
         layout.addWidget(self.lblBuscar,0,0) 
@@ -115,7 +118,10 @@ class BuscarActivo(QDialog):
         self.goToDetalles(id)
         self.guardarRegistro(id)
       else:
-        print('No encontrado')
+        msg = QMessageBox()
+        QMessageBox().setIcon(QMessageBox.Warning)
+        msg.warning(self, "Error !", "Registro no encontrado")
+        self.inputBuscar.setFocus()
 
 
     def finished(self, tag):
@@ -135,9 +141,9 @@ class BuscarActivo(QDialog):
         self.DB.write('usuario_activo', columns, data)     
 
     def goToDetalles(self, id):
-      from paginas.DetallesActivo import DetallesActivo
-      self.SW = DetallesActivo(None, self.DB, id)
-      self.close()
+        from paginas.DetallesActivo import DetallesActivo
+        self.SW = DetallesActivo(None, self.DB, id)
+        self.close()
  
  
 if __name__ == '__main__':

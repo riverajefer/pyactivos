@@ -355,13 +355,38 @@ class Database:
 
         query = "SELECT U.nombre, A.numero, UA.fecha FROM Usuarios AS U JOIN usuario_activo UA ON U.id = UA.usuario_id JOIN activos A ON UA.activo_id = A.id WHERE U.id = '{0}' ;".format(user_id)
         self.cursor.execute(query)
-
         # fetch data
         rows = self.cursor.fetchall()
-
         return rows[len(rows)-limit if limit else 0:]
             
+    def existeNumeroActivo(self,numero):
+        query = "SELECT id from activos WHERE numero = '{0}' ;".format(numero)
+        self.cursor.execute(query)
+        rows = self.cursor.fetchall()
+        if(len(rows)>0):
+            return True
+        else:
+            return False
 
+    def userIsAdmin(self):
+        query = "SELECT * FROM sesion AS S JOIN Usuarios U ON U.id = S.user_id WHERE U.cuenta = 'Administrador' "
+        self.cursor.execute(query)
+        rows = self.cursor.fetchall()
+        if(len(rows)>0):
+            return True
+        else:
+            return False
+    
+    def toggleObsoleto(self, estado, activo_id):
+        try:
+            query = "UPDATE activos SET obsoleto = '{0}' WHERE id = '{1}' ;".format(estado, activo_id)
+            self.cursor.execute(query)
+            print(str(query))
+            return True
+        except Exception as err:
+            print('Query update Failed: Error: %s' % (str(err)))
+            return False
+        finally:
+            self.conn.commit()
 
-        
 

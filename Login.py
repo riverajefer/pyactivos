@@ -23,7 +23,7 @@ class ventanaLogin(QMainWindow):
   def __init__(self, parent=None):
     super(ventanaLogin, self).__init__(parent)
     
-    self.setWindowTitle("Login con PyQt5 por: Jonathan y Jefferson")
+    self.setWindowTitle("Login")
     self.setWindowIcon(QIcon("icono.png"))
     self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
     self.setFixedSize(800, 480)
@@ -72,7 +72,7 @@ class ventanaLogin(QMainWindow):
     labelSubtitulo = QLabel("<h2><font color='white'>Sistema de control de activos fijos "
                             "(Python).</font></h2>", frame)
     labelSubtitulo.setFont(fuenteSubtitulo)
-    labelSubtitulo.move(111, 46)
+    labelSubtitulo.move(83, 46)
 
   def formulario_login(self):
     # =================== WIDGETS LOGIN ======================
@@ -107,7 +107,7 @@ class ventanaLogin(QMainWindow):
     self.lineEditUsuario.setFixedWidth(238)
     self.lineEditUsuario.setFixedHeight(26)
     self.lineEditUsuario.move(40, 1)
-    self.lineEditUsuario.setText('user')
+    self.lineEditUsuario.setText('admin')
 
     # ========================================================
 
@@ -132,7 +132,7 @@ class ventanaLogin(QMainWindow):
     self.lineEditContrasenia.setFixedWidth(238)
     self.lineEditContrasenia.setFixedHeight(26)
     self.lineEditContrasenia.move(40, 1)
-    self.lineEditContrasenia.setText('1234')
+    self.lineEditContrasenia.setText('123')
 
     #================== WIDGETS QPUSHBUTTON ===================
 
@@ -141,7 +141,7 @@ class ventanaLogin(QMainWindow):
     buttonLogin.setFixedHeight(28)
     buttonLogin.move(260, 286)
 
-    buttonCancelar = QPushButton("Cancelar", self)
+    buttonCancelar = QPushButton("Salir", self)
     buttonCancelar.setFixedWidth(135)
     buttonCancelar.setFixedHeight(28)
     buttonCancelar.move(400, 286)
