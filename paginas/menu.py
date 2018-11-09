@@ -65,8 +65,9 @@ class FormWidget(QWidget):
         
         btnNuevo.clicked.connect(self.gotToNuevoActivo)
 
-        btnLectura = QPushButton("LECTURA DE ACTIVO", self)
-        btnLectura.setFixedWidth(135)
+        btnLectura = QPushButton(" LECTURA DE ACTIVO ", self)
+        #btnLectura.setMinimumWidth(50)
+        btnLectura.setFixedWidth(180)
         btnLectura.setFixedHeight(80)
 
         btnLectura.clicked.connect(self.gotToBuscarActivo)

@@ -27,13 +27,19 @@ class NFCThread(QThread):
             self.clf = nfc.ContactlessFrontend('usb')
         except Exception as err:
            print('Error NFC dispositivo')
-        
+        self.running = False
+
+    def stop(self):
+        self.running = False
+        print('received stop signal from window.')
+        self.clf.close()     
+
+    def finNFC(self):
+        return not self.running
 
     # run method gets called when we start the thread
-    def run(self):
-        after5s = lambda: time.time() - self.started > 15
-        self.started = time.time()
-        tag = self.clf.connect(rdwr={'on-connect': lambda tag: False}, terminate=after5s)
+    def _do_work(self):
+        tag = self.clf.connect(rdwr={'on-connect': lambda tag: False}, terminate=self.finNFC)
         try:
             self.tag_id = tag.identifier.encode('hex')
             print(self.tag_id)
@@ -42,12 +48,12 @@ class NFCThread(QThread):
         except Exception:
             print('terminado por tiempo')
             self.clf.close()
-        
 
-    def cerrarNFC(self):
-        return self.__stop_reading
+    def run(self):
+        self.running = True
+        if self.running:
+            self._do_work()  
         
-
 
 class AsignarTagNFC(QMainWindow):
     def __init__(self, parent=None, idRow=8, DB=None):
@@ -88,11 +94,14 @@ class AsignarTagNFC(QMainWindow):
         self.showFullScreen()
 
         if platform == "linux" or platform == "linux2":
-            self.nfc_thread = NFCThread()
-            self.nfc_thread.start()
-            self.nfc_thread.signal.connect(self.finished)
+            self.runNFC()
 
-    def finished(self, tag):
+    def runNFC(self):
+        self.nfc_thread = NFCThread()  # This is the thread object
+        self.nfc_thread.start()
+        self.nfc_thread.signal.connect(self.resultNFC)     
+    
+    def resultNFC(self, tag):
         print('result: ', tag)
         if not self.DB.existeNFC(str(tag)):
 
@@ -104,10 +113,12 @@ class AsignarTagNFC(QMainWindow):
                 print("ERROR")
         else:
             print('Error')
-            self.title.setText("ERROR, ESTÁ ETIQUETA YA HA SIDO ASIGNADA A UN ACTIVO") 
+            self.title.setText("ERROR, ESTÁ ETIQUETA YA HA SIDO ASIGNADA A UN ACTIVO, ACERQUE OTRA ") 
+            self.runNFC()
 
 
     def volver(self):
+        self.nfc_thread.stop()
         self.close()
         from menu import Menu
         self.SW = Menu(None, self.DB)

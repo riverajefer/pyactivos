@@ -64,6 +64,10 @@ class DetallesActivo(QDialog):
         lblDescripcion = QLabel('Descripcion')
         lblDescripcion.setStyleSheet("QLabel {font-weight: bold;}")
 
+        lblObsoleto = QLabel('ACTIVO OBSOLETO')
+        lblObsoleto.hide()
+        lblObsoleto.setStyleSheet("QLabel {font-weight: bold;}")
+
         self.checkObsoleto = QCheckBox("ACTIVO OBSOLETO")
         self.checkObsoleto.stateChanged.connect(lambda:self.cambioCheck(self.checkObsoleto))
 
@@ -143,6 +147,9 @@ class DetallesActivo(QDialog):
 
         grid.addWidget(self.labelImagen, 1, 1, 6, 5)
         grid.addWidget(self.btnVolver, 4, 5)
+        grid.addWidget(lblObsoleto, 8, 1)
+        if (self.detalles[0][7]):
+            lblObsoleto.show()
 
         if self.DB.userIsAdmin():
             grid.addWidget(self.checkObsoleto, 7, 1)

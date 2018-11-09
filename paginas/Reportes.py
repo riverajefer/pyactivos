@@ -54,29 +54,37 @@ class Reportes(QDialog):
     def createTable(self):
         # Create table
         self.tableWidget = QTableWidget()
-        self.tableWidget.setColumnCount(3)
-        self.tableWidget.setHorizontalHeaderLabels(["Usuario", "Activo", "Fecha de consulta"])
+        self.tableWidget.setColumnCount(4)
+        self.tableWidget.setHorizontalHeaderLabels(["Usuario", "Activo", "Fecha de consulta", "Obsoleto"])
         header = self.tableWidget.horizontalHeader()
         header.setSectionResizeMode(QHeaderView.ResizeToContents)       
-        header.setSectionResizeMode(2, QHeaderView.Stretch)
+        header.setSectionResizeMode(3, QHeaderView.Stretch)
 
         worksheet.set_header("&CHere is some centered text.")
 
         rowReportes = self.DB.reportes(1)
+        print(rowReportes)
         for row in rowReportes:
             inx = rowReportes.index(row)
             self.tableWidget.insertRow(inx)
             self.tableWidget.setItem(inx, 0, QTableWidgetItem(row[0]))
             self.tableWidget.setItem(inx, 1, QTableWidgetItem(row[1]))
             self.tableWidget.setItem(inx, 2, QTableWidgetItem(row[2]))
+            obsoleto = 'NO'
+            if row[3]:
+                obsoleto = 'SI'
+
+            self.tableWidget.setItem(inx, 3, QTableWidgetItem(str(obsoleto)))
 
             worksheet.write(inx+1, 0, row[0])
             worksheet.write(inx+1, 1, row[1])
             worksheet.write(inx+1, 2, row[2])
+            worksheet.write(inx+1, 3, row[3])
 
         worksheet.write(0, 0, 'Nombre')
         worksheet.write(0, 1, 'Activo')
         worksheet.write(0, 2, 'Fecha de consulta')
+        worksheet.write(0, 3, 'Obsoleto')
         self.tableWidget.move(0,0)
         workbook.close()
     
@@ -84,8 +92,7 @@ class Reportes(QDialog):
         if sys.platform == "win32":
             os.startfile('reporte.xlsx')
         else:
-            opener ="open" if sys.platform == "darwin" else "xdg-open"
-            subprocess.call([opener, 'reporte.xlsx'])        
+            os.system("sudo libreoffice --calc %U reporte.xlsx")
         
  
     def volver(self):

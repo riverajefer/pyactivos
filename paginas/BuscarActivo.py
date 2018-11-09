@@ -21,7 +21,6 @@ except ImportError:
 
 class NFCThread(QThread):
     signal = pyqtSignal('PyQt_PyObject')
-    __stop_reading = False
 
     def __init__(self):
         QThread.__init__(self)
@@ -29,13 +28,20 @@ class NFCThread(QThread):
             self.clf = nfc.ContactlessFrontend('usb')
         except Exception as err:
            print('Error NFC dispositivo')
-        
+        self.running = False
+
+    def stop(self):
+        self.running = False
+        print('received stop signal from window.')
+        self.clf.close()
+
+
+    def finNFC(self):
+        return not self.running
 
     # run method gets called when we start the thread
-    def run(self):
-        after5s = lambda: time.time() - self.started > 15
-        self.started = time.time()
-        tag = self.clf.connect(rdwr={'on-connect': lambda tag: False}, terminate=after5s)
+    def _do_work(self):
+        tag = self.clf.connect(rdwr={'on-connect': lambda tag: False}, terminate=self.finNFC)
         try:
             self.tag_id = tag.identifier.encode('hex')
             print(self.tag_id)
@@ -44,6 +50,11 @@ class NFCThread(QThread):
         except Exception:
             print('terminado por tiempo')
             self.clf.close()
+
+    def run(self):
+        self.running = True
+        if self.running:
+            self._do_work()        
 
 class BuscarActivo(QDialog):
     def __init__(self, parent=None, DB=None):
@@ -105,23 +116,18 @@ class BuscarActivo(QDialog):
         self.horizontalGroupBox.setLayout(layout)
 
         if platform == "linux" or platform == "linux2":
-            self.nfc_thread = NFCThread()  # This is the thread object
-            self.nfc_thread.start()
-            self.nfc_thread.signal.connect(self.finNFC)
+            self.runNFC()
 
+    
+    def runNFC(self):
+        self.nfc_thread = NFCThread()  # This is the thread object
+        self.nfc_thread.start()
+        self.nfc_thread.signal.connect(self.resultNFC)        
+    
+    
     def buscarActivo(self):
       numero = self.inputBuscar.text()
       id = self.DB.buscarPorNumero(str(numero))
-      self.resultBusqueda(id)
-
-
-    def finNFC(self, tag):
-      print('result: ', tag)
-      id = self.DB.buscarPorTag(str(tag))
-      self.resultBusqueda(id)
-     
-
-    def resultBusqueda(self, id):
       if id:
         self.goToDetalles(id)
         self.guardarRegistro(id)
@@ -132,7 +138,22 @@ class BuscarActivo(QDialog):
         self.inputBuscar.setFocus()
 
 
-    def volver(self, tag):
+    def resultNFC(self, tag):
+      print('result: ', tag)
+      id = self.DB.buscarPorTag(str(tag))
+      if id:
+        self.goToDetalles(id)
+        self.guardarRegistro(id)
+      else:
+        msg = QMessageBox()
+        QMessageBox().setIcon(QMessageBox.Warning)
+        msg.warning(self, "Error !", "Registro no encontrado")
+        self.inputBuscar.setFocus()
+        self.runNFC()
+
+
+    def volver(self):
+      
       from menu import Menu
       self.SW = Menu(None, self.DB)
       self.close()
@@ -146,6 +167,7 @@ class BuscarActivo(QDialog):
         self.DB.write('usuario_activo', columns, data)     
 
     def goToDetalles(self, id):
+        self.nfc_thread.stop()
         from paginas.DetallesActivo import DetallesActivo
         self.SW = DetallesActivo(None, self.DB, id)
         self.close()

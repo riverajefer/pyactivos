@@ -80,22 +80,16 @@ Reportes (Tabla, descargar, la sessión de usuario lo que se leyo )
 
 
 TODO  
-VENTANA 
-MENÚ 
- -> Agregar menú toolbar (Aplica para todas las ventanas)
 
 DETALLES DE ACTIVO
  -> mostrar si está obsoleto
 
 REPORTES
  -> Abrir Reporte (Hoja de calculo)
- 
 
 OTROS.
  -> AJUSTAR ISSUE DEL LECTOR NFC
  -> REFACTORIZACIÓN
- -> NO MOSTRAR LA CONSOLA EN CAMBIOS DE PANTALLA
- -> ISSUE GUARDAR EN DB CARCTERES ESPACIALES LINUX
 
 
 
