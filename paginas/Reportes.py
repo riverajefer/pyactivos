@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import sys
-import os
+import sys, os, subprocess
 from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, QHBoxLayout, 
 QGroupBox, QDialog, QVBoxLayout, QGridLayout, QGridLayout, QLabel, QHeaderView,
 QMainWindow, QTableWidget,QTableWidgetItem)
@@ -49,7 +48,8 @@ class Reportes(QDialog):
         self.layoutTabla.addWidget(btnAbrirReporte) 
         self.layoutTabla.addWidget(btnVolver) 
         self.setLayout(self.layoutTabla) 
-        self.show()
+        #self.show()
+        self.showFullScreen()
 
     def createTable(self):
         # Create table
@@ -81,7 +81,12 @@ class Reportes(QDialog):
         workbook.close()
     
     def abrirReporte(self):
-        os.startfile('reporte.xlsx')
+        if sys.platform == "win32":
+            os.startfile('reporte.xlsx')
+        else:
+            opener ="open" if sys.platform == "darwin" else "xdg-open"
+            subprocess.call([opener, 'reporte.xlsx'])        
+        
  
     def volver(self):
       from menu import Menu

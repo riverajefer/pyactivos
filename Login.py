@@ -7,11 +7,12 @@ sencilla.
 """
 from PyQt5.QtGui import QIcon, QPalette, QColor, QPixmap, QFont
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QFrame, QLabel, QComboBox, QLineEdit,
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QAction, qApp, QFrame, QLabel, QComboBox, QLineEdit,
                              QPushButton, QMessageBox)
 
 from paginas.menu import Menu
 from DB.database import Database
+from sys import platform
 
 db_path = 'db.db'
 DB = Database()
@@ -24,7 +25,7 @@ class ventanaLogin(QMainWindow):
     super(ventanaLogin, self).__init__(parent)
     
     self.setWindowTitle("Login")
-    self.setWindowIcon(QIcon("icono.png"))
+    self.setWindowIcon(QIcon("app.png"))
     self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
     self.setFixedSize(800, 480)
 
@@ -35,9 +36,20 @@ class ventanaLogin(QMainWindow):
     self.initUI()
 
   def initUI(self):
+    self.menuTop()
     self.encabezado()
     self.formulario_login()
 
+  def menuTop(self):
+    exitAct = QAction(QIcon('salir.png'), '&SALIR', self)        
+    exitAct.setShortcut('Ctrl+Q')
+    exitAct.setStatusTip('Salir de la aplicación')
+    exitAct.triggered.connect(qApp.quit)
+    self.statusBar()
+    menubar = self.menuBar()
+    fileMenu = menubar.addMenu('&Archivo')
+    fileMenu.addAction(exitAct)
+  
   def encabezado(self):
     paleta = QPalette()
     paleta.setColor(QPalette.Background, QColor(51, 0, 102))
@@ -49,7 +61,7 @@ class ventanaLogin(QMainWindow):
     frame.setPalette(paleta)
     frame.setFixedWidth(800)
     frame.setFixedHeight(84)
-    frame.move(0, 0)
+    frame.move(0, 25)
 
     labelIcono = QLabel(frame)
     labelIcono.setFixedWidth(40)
@@ -202,11 +214,13 @@ if __name__ == '__main__':
   fuente = QFont()
   fuente.setPointSize(10)
   fuente.setFamily("Bahnschrift Light")
-
   aplicacion.setFont(fuente)
   
   ventana = ventanaLogin()
-  ventana.show()
-  # ventana.showFullScreen()
+
+  if platform == "linux" or platform == "linux2":
+    ventana.showFullScreen()
+  else:
+    ventana.show()
   
   sys.exit(aplicacion.exec_())

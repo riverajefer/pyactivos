@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import sys
+from sys import platform
 from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, QHBoxLayout, 
 QGroupBox, QDialog, QVBoxLayout, 
 QGridLayout, QMainWindow, QLabel, QLineEdit, QMessageBox)
@@ -65,7 +66,8 @@ class BuscarActivo(QDialog):
         windowLayout.addWidget(self.horizontalGroupBox)
         self.setLayout(windowLayout)
  
-        self.show()
+        self.showFullScreen()
+        #self.show()
  
     def buscarGridLayout(self):
         self.horizontalGroupBox = QGroupBox("BUSCAR ACTIVO")
@@ -86,7 +88,6 @@ class BuscarActivo(QDialog):
         self.btnBuscar.setFixedHeight(35)
         self.btnBuscar.clicked.connect(self.buscarActivo)
 
-
         self.btnVolver = QPushButton("VOLVER", self)
         self.btnVolver.setFixedWidth(150)
         self.btnVolver.setFixedHeight(35)
@@ -95,7 +96,6 @@ class BuscarActivo(QDialog):
         self.lblEtiqueta = QLabel('O ACERQUE LA ETIQUETA NFC')
         self.lblEtiqueta.setStyleSheet("QLabel {font-weight: bold;}")
 
-        
         layout.addWidget(self.lblBuscar,0,0) 
         layout.addWidget(self.inputBuscar,0,1) 
         layout.addWidget(self.btnBuscar,0,2) 
@@ -104,17 +104,25 @@ class BuscarActivo(QDialog):
  
         self.horizontalGroupBox.setLayout(layout)
 
-        #self.nfc_thread = NFCThread()  # This is the thread object
-        #self.nfc_thread.start()
-        #self.nfc_thread.signal.connect(self.finished)
-
+        if platform == "linux" or platform == "linux2":
+            self.nfc_thread = NFCThread()  # This is the thread object
+            self.nfc_thread.start()
+            self.nfc_thread.signal.connect(self.finNFC)
 
     def buscarActivo(self):
       numero = self.inputBuscar.text()
-
       id = self.DB.buscarPorNumero(str(numero))
+      self.resultBusqueda(id)
+
+
+    def finNFC(self, tag):
+      print('result: ', tag)
+      id = self.DB.buscarPorTag(str(tag))
+      self.resultBusqueda(id)
+     
+
+    def resultBusqueda(self, id):
       if id:
-        print('Ok encontrado')
         self.goToDetalles(id)
         self.guardarRegistro(id)
       else:
@@ -123,9 +131,6 @@ class BuscarActivo(QDialog):
         msg.warning(self, "Error !", "Registro no encontrado")
         self.inputBuscar.setFocus()
 
-
-    def finished(self, tag):
-      print('result: ', tag)
 
     def volver(self, tag):
       from menu import Menu

@@ -4,6 +4,7 @@ import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QHBoxLayout, QGroupBox, QDialog, QVBoxLayout, QGridLayout, QMainWindow
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot
+from sys import platform
 
 class Menu(QDialog):
     def __init__(self, parent=None, DB=None):
@@ -76,4 +77,8 @@ class Menu(QDialog):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = Menu()
+    if platform == "linux" or platform == "linux2":
+        ex.showFullScreen()
+    else:
+        ex.show()    
     sys.exit(app.exec_())

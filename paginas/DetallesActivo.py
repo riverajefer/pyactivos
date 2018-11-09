@@ -152,7 +152,8 @@ class DetallesActivo(QDialog):
             self.btnGuardar.hide()
 
         self.setLayout(grid) 
-        self.show()
+        #self.show()
+        self.showFullScreen()
 
     def cambioCheck(self,b):
         self.btnGuardar.setDisabled(not b.isChecked())

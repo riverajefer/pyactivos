@@ -1,13 +1,37 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QHBoxLayout, QGroupBox, QDialog, QVBoxLayout, QGridLayout, QMainWindow
-from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import pyqtSlot
+from sys import platform
+from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, QHBoxLayout,
+QAction, qApp, QGroupBox, QDialog, QVBoxLayout, QGridLayout, QMainWindow)
+from PyQt5.QtGui import QIcon, QFont, QPalette, QColor
+from PyQt5.QtCore import pyqtSlot, Qt
+from sys import platform
 
-class Menu(QDialog):
+class Menu(QMainWindow):
     def __init__(self, parent=None, DB=None):
         super(Menu, self).__init__(parent)
+        self.DB = DB
+        self.form_widget = FormWidget(self, DB) 
+        self.setCentralWidget(self.form_widget) 
+        self.menuTop()
+        self.showFullScreen()
+ 
+    def menuTop(self):
+        exitAct = QAction(QIcon('salir.png'), '&SALIR', self)        
+        exitAct.setShortcut('Ctrl+Q')
+        exitAct.setStatusTip('Salir de la aplicación')
+        exitAct.triggered.connect(qApp.quit)
+        self.statusBar()
+        menubar = self.menuBar()
+        fileMenu = menubar.addMenu('&Archivo')
+        fileMenu.addAction(exitAct)
+
+ 
+class FormWidget(QWidget):
+
+    def __init__(self, parent, DB=None):        
+        super(FormWidget, self).__init__(parent)
         self.title = 'MENÚ'
         self.left = 500
         self.top = 350
@@ -16,18 +40,19 @@ class Menu(QDialog):
         self.DB = DB
         self.initUI()
  
+
     def initUI(self):
+        print('Menu paginas')
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
- 
         self.createGridLayout()
  
         windowLayout = QVBoxLayout()
         windowLayout.addWidget(self.horizontalGroupBox)
         self.setLayout(windowLayout)
  
-        self.show()
- 
+        self.showFullScreen()
+
     def createGridLayout(self):
         self.horizontalGroupBox = QGroupBox("MENÚ PRINCIPAL")
          
@@ -41,7 +66,7 @@ class Menu(QDialog):
         btnNuevo.clicked.connect(self.gotToNuevoActivo)
 
         btnLectura = QPushButton("LECTURA DE ACTIVO", self)
-        btnLectura.setFixedWidth(145)
+        btnLectura.setFixedWidth(135)
         btnLectura.setFixedHeight(80)
 
         btnLectura.clicked.connect(self.gotToBuscarActivo)
@@ -72,8 +97,10 @@ class Menu(QDialog):
         from paginas.Reportes import Reportes 
         self.SW = Reportes(None, self.DB)
 
- 
+
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    ex = Menu()
+    import sys
+    app = QApplication([])
+    foo = Menu()
+    foo.showFullScreen()
     sys.exit(app.exec_())

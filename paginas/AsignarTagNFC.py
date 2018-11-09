@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import sys
 import time
+from sys import platform
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QGridLayout, QWidget, QPushButton, QVBoxLayout
 from PyQt5.QtCore import QSize, QThread, pyqtSignal
@@ -82,12 +83,14 @@ class AsignarTagNFC(QMainWindow):
         self.button.setFixedWidth(135)
         self.button.setFixedHeight(80)
         gridLayout.addWidget(self.button, 1, 0)
-        self.show()
+        
+        #self.show()
+        self.showFullScreen()
 
-        #self.nfc_thread = NFCThread()  # This is the thread object
-        #self.nfc_thread.start()
-        #self.nfc_thread.signal.connect(self.finished)
-
+        if platform == "linux" or platform == "linux2":
+            self.nfc_thread = NFCThread()
+            self.nfc_thread.start()
+            self.nfc_thread.signal.connect(self.finished)
 
     def finished(self, tag):
         print('result: ', tag)

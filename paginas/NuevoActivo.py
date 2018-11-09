@@ -19,6 +19,8 @@ from DB.database import Database
 db_path = 'db.db'
 DB = Database()
 DB.open(db_path)
+reload(sys)  
+sys.setdefaultencoding('utf8')
 
 class QLabelClickable(QLabel):
     clicked = pyqtSignal()
@@ -130,7 +132,8 @@ class NuevoActivo(QDialog):
         grid.addWidget(self.btnVolver, 4, 5)
 
         self.setLayout(grid) 
-        self.show()
+        #self.show()
+        self.showFullScreen()
 
     def showDate(self, date):
         print(date.toString())        
@@ -155,6 +158,7 @@ class NuevoActivo(QDialog):
         responsble = self.editResponsable.text()
         descripcion = self.editDescripcion.toPlainText()
         departamento = self.comboDepartamento.currentText()
+        dep = departamento.encode('utf-8')
         numeroActivo = self.editNumeroActivo.text().replace(" ", "")
         foto = self.labelImagen.pixmap()
 
@@ -175,7 +179,7 @@ class NuevoActivo(QDialog):
             shutil.copy(self.rutaImagen, str(mypath))
 
         columns = 'numero, descripcion, departamento, responsable, fecha_ingreso, tag, obsoleto, imagen'
-        data = " '"+numeroActivo+"', '"+descripcion+"', '"+departamento+"', '"+responsble+"', '"+str(fechaIngreso)+"', '" "', "+str(0)+", '"+self.nombreImagen+"' "
+        data = " '"+numeroActivo+"', '"+descripcion+"', '"+dep+"', '"+responsble+"', '"+str(fechaIngreso)+"', '" "', "+str(0)+", '"+self.nombreImagen+"' "
         print(data)
 
         rowId = DB.write('activos', columns, data)

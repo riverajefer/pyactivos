@@ -84,36 +84,18 @@ VENTANA
 MENÚ 
  -> Agregar menú toolbar (Aplica para todas las ventanas)
 
-NUEVO ACTIVO.
- -> Validar número de activo, como único (LISTO)
- -> Validar campos, obligatorios (LISTO) 
- -> popup confirm (Si da en No, envíar al menú) (LISTO)
-
-lECTURA DE ACTIVO
- -> Ajustes graficos (LISTO)
- -> Mensaje (Si no lo encuentra) (LISTO)
- -> Buscar por código NFC
-
 DETALLES DE ACTIVO
- -> Ajustes graficos (LISTO)
- -> Agregar campo, para volver obsoleto, si el usuario en sesión es admin (LISTO)
- -> Guardar (Actualizar, el estado obsoleto en la DB) (LISTO)
+ -> mostrar si está obsoleto
 
 REPORTES
- -> Agregar boton para volver (LISTO)
- -> Ajustes graficos (LISTO)
- -> Guardar reporte en Ruta (LISTO) 	
- -> Abrir Reporte (Ruta) (LISTO)
- -> Header Excel (LISTO)
+ -> Abrir Reporte (Hoja de calculo)
  
 
 OTROS.
  -> AJUSTAR ISSUE DEL LECTOR NFC
- -> UNICO ARCHIVO MENÚ
- -> MENÚ TOOLBAR (CON OPT DE SALIR)
- -> FULLSCREN TODAS LAS VENTANAS
- -> PROBAR EN LA PANTALLA
  -> REFACTORIZACIÓN
+ -> NO MOSTRAR LA CONSOLA EN CAMBIOS DE PANTALLA
+ -> ISSUE GUARDAR EN DB CARCTERES ESPACIALES LINUX
 
 
 

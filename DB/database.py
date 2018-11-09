@@ -331,6 +331,15 @@ class Database:
         else:
             return False
 
+    def buscarPorTag(self,tag):
+        query = "SELECT id from activos WHERE tag = '{0}' ;".format(tag)
+        self.cursor.execute(query)
+        rows = self.cursor.fetchall()
+        if(len(rows)>0):
+            return rows[0][0] 
+        else:
+            return False
+
     def getPorId(self,id):
         query = "SELECT * from activos WHERE id = '{0}' ;".format(id)
         self.cursor.execute(query)
